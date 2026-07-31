@@ -1,4 +1,4 @@
-const GLOBAL_URL = `https://6a50327cf45d5352b6121ab2.mockapi.io/produtos`;
+const GLOBAL_URL = `https://6a5fe634b1933e9d25fcc879.mockapi.io/produtos`;
 
 async function carregarProdutos() {
   try {
@@ -56,12 +56,8 @@ async function removerProduto(id) {
   }
 }
 
-async function cadastrarProduto() {
-  const produto = {
-    nome: document.querySelector("#nome").value,
-    preco: Number(document.querySelector("#preco").value) || 0, // ao digitar (|| 0 ele vai tentar fazer o number, e se der erro ele vai zerar).
-    quantidade: Number(document.querySelector("#quantidade").value),
-  };
+async function adicionarProduto() {
+  const produto = criarObjetoProduto(); // refaturou ou reescrever o código
 
   try {
     await fetch(GLOBAL_URL, {
@@ -71,7 +67,8 @@ async function cadastrarProduto() {
       },
       body: JSON.stringify(produto),
     });
-
+    limparFormulario();
+    fecharModal();
     carregarProdutos();
   } catch (error) {
     console.error(error);
@@ -79,4 +76,33 @@ async function cadastrarProduto() {
   }
 }
 
+function salvarProduto() {}
+
+function editarProduto() {}
+
+async function carregarProdutoDetalhe() {}
+
+function preencherFormulario() {}
+
+async function atualizarProduto() {}
+
+function limparFormulario() {
+  document.querySelector("#nome").value = "";
+  document.querySelector("#preco").value = "";
+  document.querySelector("#quantidade").value = "";
+}
+
+function fecharModal() {
+  const modalHtml = document.querySelector("#modalProduto");
+  const modal = bootstrap.Modal.getOrCreateInstance(modalHtml);
+  modal.hide();
+}
+
+function criarObjetoProduto() {
+  return {
+    nome: document.querySelector("#nome").value,
+    preco: Number(document.querySelector("#preco").value) || 0, // ao digitar (|| 0 ele vai tentar fazer o number, e se der erro ele vai zerar).
+    quantidade: Number(document.querySelector("#quantidade").value),
+  };
+}
 carregarProdutos();
