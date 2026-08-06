@@ -25,6 +25,8 @@ function listarProdutos(produtos) {
       <td>
       <button class= "btn btn-danger" onclick="removerProduto(${produto.id})">Remover
       </button>
+       <button class= "btn btn-primary" onclick="editarProduto(${produto.id})">Editar
+      </button>
       </td>
     </tr>`;
   }
@@ -78,9 +80,18 @@ async function adicionarProduto() {
 
 function salvarProduto() {}
 
-function editarProduto() {}
+async function editarProduto(id) {
+  const url = `${GLOBAL_URL}/${id}`;
 
-async function carregarProdutoDetalhe() {}
+  try {
+    const resposta = await fetch(url);
+    const produto = await resposta.json();
+
+    console.log(produto);
+  } catch (error) {
+    alert("Não foi possível editar este produto");
+  }
+}
 
 function preencherFormulario() {}
 
