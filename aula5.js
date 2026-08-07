@@ -58,6 +58,11 @@ async function removerProduto(id) {
   }
 }
 
+function abrirModalNovo() {
+  limparFormulario();
+  abrirModal();
+}
+
 async function adicionarProduto() {
   const produto = criarObjetoProduto(); // refaturou ou reescrever o código
 
@@ -78,7 +83,25 @@ async function adicionarProduto() {
   }
 }
 
-function salvarProduto() {}
+function salvarProduto() {
+  const id = document.querySelector("#id").value;
+
+  if (
+    document.querySelector("#nome").value == "" ||
+    document.querySelector("#preco").value == "" ||
+    document.querySelector("#quantidade").value == ""
+  ) {
+    alert("Todos os campos devem ser preenchidos");
+    return;
+  }
+
+  if (Number(id)) {
+    atualizarProduto(id);
+    return;
+  }
+  //fallback
+  adicionarProduto();
+}
 
 async function editarProduto(id) {
   const url = `${GLOBAL_URL}/${id}`;
@@ -87,17 +110,42 @@ async function editarProduto(id) {
     const resposta = await fetch(url);
     const produto = await resposta.json();
 
-    console.log(produto);
+    preencherFormulario(produto);
+    abrirModal();
   } catch (error) {
     alert("Não foi possível editar este produto");
   }
 }
 
-function preencherFormulario() {}
+function preencherFormulario(produto) {
+  document.querySelector("#id").value = produto.id;
+  document.querySelector("#nome").value = produto.nome;
+  document.querySelector("#preco").value = produto.preco;
+  document.querySelector("#quantidade").value = produto.quantidade;
+}
 
-async function atualizarProduto() {}
+async function atualizarProduto(id) {
+  const produto = criarObjetoProduto();
+  const url = `${GLOBAL_URL}/${id}`;
+
+  try {
+    await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(produto),
+    });
+    limparFormulario();
+    fecharModal();
+    carregarProdutos();
+  } catch (error) {
+    alert("Não foi possível atualizar o produto");
+  }
+}
 
 function limparFormulario() {
+  document.querySelector("#id").value = "";
   document.querySelector("#nome").value = "";
   document.querySelector("#preco").value = "";
   document.querySelector("#quantidade").value = "";
@@ -109,10 +157,16 @@ function fecharModal() {
   modal.hide();
 }
 
+function abrirModal() {
+  const modalHtml = document.querySelector("#modalProduto");
+  const modal = bootstrap.Modal.getOrCreateInstance(modalHtml);
+  modal.show();
+}
+
 function criarObjetoProduto() {
   return {
     nome: document.querySelector("#nome").value,
-    preco: Number(document.querySelector("#preco").value) || 0, // ao digitar (|| 0 ele vai tentar fazer o number, e se der erro ele vai zerar).
+    preco: Number(document.querySelector("#preco").value), // ao digitar (|| 0 ele vai tentar fazer o number, e se der erro ele vai zerar).
     quantidade: Number(document.querySelector("#quantidade").value),
   };
 }
